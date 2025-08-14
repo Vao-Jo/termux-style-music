@@ -1,59 +1,62 @@
 #!/bin/bash
-
-# Warna teks
-green="\033[32m"
-cyan="\033[36m"
-yellow="\033[33m"
-red="\033[31m"
-reset="\033[0m"
+# Termux Style + Music Installer
+# By Vao-Jo
 
 clear
-echo -e "${cyan}"
-figlet "Termux Style" | lolcat
-echo -e "${reset}"
-sleep 1
+echo -e "\033[1;36m"
+echo "████████╗███████╗██████╗ ███╗   ███╗██╗   ██╗██╗  ██╗"
+echo "╚══██╔══╝██╔════╝██╔══██╗████╗ ████║██║   ██║██║ ██╔╝"
+echo "   ██║   █████╗  ██████╔╝██╔████╔██║██║   ██║█████╔╝ "
+echo "   ██║   ██╔══╝  ██╔═══╝ ██║╚██╔╝██║██║   ██║██╔═██╗ "
+echo "   ██║   ███████╗██║     ██║ ╚═╝ ██║╚██████╔╝██║  ██╗"
+echo "   ╚═╝   ╚══════╝╚═╝     ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝"
+echo -e "\033[0m"
 
-# Loading animasi
-echo -ne "${yellow}Menginstall paket"
-for i in {1..5}; do
-    echo -n "."
-    sleep 0.3
-done
-echo -e "${reset}"
+# Animasi loading
+loading() {
+    echo -ne "\033[1;33mMenginstall paket"
+    for i in {1..5}; do
+        echo -n "."
+        sleep 0.4
+    done
+    echo -e "\033[0m"
+}
 
-# Instal paket
-pkg update -y
-pkg install sox figlet lolcat -y
+# Install paket
+loading
+pkg update -y && pkg upgrade -y
+pkg install figlet -y
+pkg install mpv -y
+pkg install ruby -y
+pkg install curl -y
+gem install lolcat
 
-# Tanya nama
-echo -ne "${cyan}Masukkan nama untuk prompt: ${reset}"
-read USERNAME
+# Buat musik startup
+mkdir -p ~/termux-style
+curl -L -o ~/termux-style/startup.mp3 https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3
 
-# Cek musik
-if [ ! -f "$HOME/startup.mp3" ]; then
-    cp "$HOME/husarski-cyberwave-172902.mp3" "$HOME/startup.mp3" 2>/dev/null || {
-        echo -e "${red}File musik tidak ditemukan!${reset}"
-        exit 1
-    }
+# Minta nama user
+echo -ne "\033[1;32mMasukkan nama untuk prompt: \033[0m"
+read username
+if [ -z "$username" ]; then
+    echo "Nama tidak boleh kosong!"
+    exit 1
 fi
 
-# Backup .bashrc
-cp "$HOME/.bashrc" "$HOME/.bashrc.backup.$(date +%s)"
+# Edit .bashrc
+cat <<EOL > ~/.bashrc
+# Musik startup
+mpv --really-quiet ~/termux-style/startup.mp3 &
+trap 'killall mpv 2>/dev/null' EXIT
 
-# Tulis .bashrc baru
-cat <<EOT > "$HOME/.bashrc"
-trap "pkill -f 'play \$HOME/startup.mp3'" EXIT
-
-play "\$HOME/startup.mp3" gain 3 repeat 999 > /dev/null 2>&1 &
-
+# Banner
 clear
 figlet "Welcome" | lolcat
-echo -e "\\n"
 
-PS1="~ ☠️${USERNAME}☠️ "
-EOT
+# Prompt custom
+PS1="~ ☠️${username}☠️ "
+EOL
 
-# Pesan sukses
-echo -e "${green}"
+clear
 figlet "Sukses!" | lolcat
-echo -e "${reset}Tutup dan buka lagi Termux untuk melihat hasilnya."
+echo "Tutup dan buka lagi Termux untuk melihat hasilnya."
