@@ -1,15 +1,14 @@
 # Termux Style + Music
 
-Kustomisasi Termux dengan musik startup, banner warna-warni, dan prompt `~ ☠️username☠️`.
-
-## Fitur
-- Musik otomatis saat Termux dibuka
-- Musik berhenti saat Termux ditutup (trap EXIT)
+Kustomisasi Termux agar tampil lebih keren dengan:
+- Musik startup otomatis 🎵
+- Musik berhenti saat Termux ditutup
 - Banner warna-warni (figlet + lolcat)
 - Prompt kustom `~ ☠️username☠️`
-- Instalasi cepat 1 baris
+- Instalasi cepat 1 perintah
 
-## Cara install
+## Instalasi
+Jalankan perintah ini di Termux:
 ```bash
 pkg install curl -y
 curl -s https://raw.githubusercontent.com/Vao-Jo/termux-style-music/main/install-termux-style.sh | bash
