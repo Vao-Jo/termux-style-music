@@ -1,62 +1,34 @@
-#!/bin/bash
-# Termux Style + Music Installer
-# By Vao-Jo
+#!/data/data/com.termux/files/usr/bin/bash
 
-clear
-echo -e "\033[1;36m"
-echo "████████╗███████╗██████╗ ███╗   ███╗██╗   ██╗██╗  ██╗"
-echo "╚══██╔══╝██╔════╝██╔══██╗████╗ ████║██║   ██║██║ ██╔╝"
-echo "   ██║   █████╗  ██████╔╝██╔████╔██║██║   ██║█████╔╝ "
-echo "   ██║   ██╔══╝  ██╔═══╝ ██║╚██╔╝██║██║   ██║██╔═██╗ "
-echo "   ██║   ███████╗██║     ██║ ╚═╝ ██║╚██████╔╝██║  ██╗"
-echo "   ╚═╝   ╚══════╝╚═╝     ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝"
-echo -e "\033[0m"
-
-# Animasi loading
-loading() {
-    echo -ne "\033[1;33mMenginstall paket"
-    for i in {1..5}; do
-        echo -n "."
-        sleep 0.4
-    done
-    echo -e "\033[0m"
-}
-
-# Install paket
-loading
-pkg update -y && pkg upgrade -y
-pkg install figlet -y
-pkg install mpv -y
-pkg install ruby -y
-pkg install curl -y
-gem install lolcat
-
-# Buat musik startup
-mkdir -p ~/termux-style
-curl -L -o ~/termux-style/startup.mp3 https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3
-
-# Minta nama user
-echo -ne "\033[1;32mMasukkan nama untuk prompt: \033[0m"
-read username
-if [ -z "$username" ]; then
-    echo "Nama tidak boleh kosong!"
-    exit 1
+# Tanya nama user
+read -p "Masukkan nama yang ingin dipakai di Termux: " USERNAME
+if [ -z "$USERNAME" ]; then
+    USERNAME="SUKSES"
 fi
 
-# Edit .bashrc
-cat <<EOL > ~/.bashrc
-# Musik startup
-mpv --really-quiet ~/termux-style/startup.mp3 &
-trap 'killall mpv 2>/dev/null' EXIT
+# Efek loading
+echo -ne "\n[+] Menyiapkan instalasi"
+for i in {1..5}; do
+    echo -n "."
+    sleep 0.3
+done
+echo -e " OK!\n"
 
-# Banner
+# Pastikan dependensi terpasang
+pkg install sox figlet ruby -y > /dev/null 2>&1
+gem install lolcat > /dev/null 2>&1
+
+# Salin musik startup
+cp husarski-cyberwave-172902.mp3 ~/startup.mp3
+
+# Tambahkan ke .bashrc
+cat <<EOT >> ~/.bashrc
+trap 'pkill -f "play ~/startup.mp3"' EXIT
+play ~/startup.mp3 gain 3 repeat 999 > /dev/null 2>&1 &
+
 clear
-figlet "Welcome" | lolcat
+figlet "Welcome $USERNAME" | lolcat
+PS1="~ ☠️$USERNAME☠️ "
+EOT
 
-# Prompt custom
-PS1="~ ☠️${username}☠️ "
-EOL
-
-clear
-figlet "Sukses!" | lolcat
-echo "Tutup dan buka lagi Termux untuk melihat hasilnya."
+echo "✅ Instalasi selesai. Silakan buka ulang Termux."
